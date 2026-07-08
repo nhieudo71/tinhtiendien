@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#12141a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tiền Điện">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <title>⚡ Tính Tiền Điện 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -86,17 +93,22 @@ header { display: flex; align-items: center; justify-content: space-between; mar
 .bolt svg { width: 22px; height: 22px; }
 .brand h1 { font-family: var(--font-display); font-size: 1.28rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
 .brand small { display: block; font-family: var(--font-body); font-size: .72rem; font-weight: 500; color: var(--ink-2); letter-spacing: .02em; }
-#themeBtn {
+.head-actions { display: flex; align-items: center; gap: 8px; }
+#themeBtn, #installBtn {
   width: 42px; height: 42px; border-radius: 13px; border: 1px solid var(--border);
   background: var(--surface); color: var(--ink); cursor: pointer;
   display: grid; place-items: center; transition: transform .2s, background .3s;
 }
 #themeBtn:active { transform: scale(.9) rotate(-15deg); }
 #themeBtn svg { width: 20px; height: 20px; }
+#installBtn { display: none; color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+#installBtn.show { display: grid; animation: rise .35s ease both; }
+#installBtn:active { transform: scale(.9); }
+#installBtn svg { width: 20px; height: 20px; }
 
 /* ---------- Tabs ---------- */
 .tabs {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
   background: var(--surface-2); border: 1px solid var(--border);
   padding: 4px; border-radius: var(--radius); margin-bottom: 16px;
 }
@@ -247,6 +259,51 @@ details.info th, details.info td { text-align: left; padding: 6px 6px; border-bo
 details.info th { color: var(--ink-3); font-weight: 600; font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; }
 details.info td.num { text-align: right; font-weight: 600; }
 
+/* ---------- Save button ---------- */
+.savebtn {
+  display: none; width: 100%; margin: -4px 0 14px; padding: 12px 14px;
+  border: 1.5px dashed var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--ink-2); cursor: pointer;
+  font-family: var(--font-body); font-weight: 600; font-size: .84rem;
+  transition: border-color .2s, color .2s, background .2s;
+}
+.savebtn.show { display: block; animation: rise .35s ease both; }
+.savebtn:active { border-color: var(--accent); color: var(--accent-ink); }
+.savebtn.saved { border-style: solid; border-color: var(--ok); color: var(--ok); background: var(--accent-soft); }
+
+/* ---------- History ---------- */
+.hist-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px dashed var(--border);
+}
+.hist-item:last-child { border-bottom: 0; }
+.hist-item .ico {
+  width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 1.1rem;
+  background: var(--accent-soft); border: 1px solid var(--border);
+}
+.hist-item .mid { flex: 1; min-width: 0; }
+.hist-item .mid .t { font-weight: 700; font-size: .84rem; }
+.hist-item .mid .d { font-size: .7rem; color: var(--ink-3); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hist-item .amt { font-family: var(--font-display); font-weight: 800; font-size: .92rem; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--accent-ink); }
+.hist-item .del {
+  width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--border); flex-shrink: 0;
+  background: var(--surface-2); color: var(--ink-3); cursor: pointer; font-size: .9rem;
+  display: grid; place-items: center; transition: all .15s;
+}
+.hist-item .del:active { transform: scale(.9); color: #e84a3c; border-color: #e84a3c; }
+#histEmpty { text-align: center; font-size: .82rem; color: var(--ink-3); padding: 26px 0; line-height: 1.7; }
+#histEmpty .big { font-size: 2rem; display: block; margin-bottom: 6px; filter: grayscale(1) opacity(.5); }
+#histClear {
+  display: none; width: 100%; margin-top: 12px; padding: 11px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface-2); color: var(--ink-2); cursor: pointer;
+  font-family: var(--font-body); font-weight: 600; font-size: .8rem;
+  transition: all .2s;
+}
+#histClear.show { display: block; }
+#histClear:active { color: #e84a3c; border-color: #e84a3c; }
+
 footer { text-align: center; font-size: .7rem; color: var(--ink-3); line-height: 1.7; margin-top: 22px; }
 footer b { color: var(--ink-2); }
 </style>
@@ -264,16 +321,22 @@ footer b { color: var(--ink-2); }
         <small>Biểu giá EVN · cập nhật 2026</small>
       </div>
     </div>
-    <button id="themeBtn" aria-label="Đổi giao diện sáng/tối">
-      <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-      <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
-    </button>
+    <div class="head-actions">
+      <button id="installBtn" aria-label="Cài đặt ứng dụng" title="Cài đặt ứng dụng">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      </button>
+      <button id="themeBtn" aria-label="Đổi giao diện sáng/tối">
+        <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+      </button>
+    </div>
   </header>
 
   <nav class="tabs" role="tablist">
     <button class="active" data-pane="sh" role="tab"><span class="ico">🏠</span>Sinh hoạt</button>
     <button data-pane="kd" role="tab"><span class="ico">🏪</span>Kinh doanh</button>
     <button data-pane="sx" role="tab"><span class="ico">🏭</span>Sản xuất</button>
+    <button data-pane="ls" role="tab"><span class="ico">🕘</span>Lịch sử</button>
   </nav>
 
   <!-- ============ SINH HOẠT ============ -->
@@ -338,6 +401,8 @@ footer b { color: var(--ink-2); }
       <div class="meta" id="shMeta">Nhập số điện để tính</div>
     </div>
 
+    <button class="savebtn" id="shSave">💾 Lưu kết quả vào lịch sử</button>
+
     <div class="card" id="shDetailCard" style="display:none">
       <h2>Chi tiết theo bậc</h2>
       <div class="tierbar-wrap" id="shTierWrap">
@@ -380,6 +445,7 @@ footer b { color: var(--ink-2); }
       <div class="amount" id="kdTotal">0<small> đ</small></div>
       <div class="meta" id="kdMeta">Nhập số điện để tính</div>
     </div>
+    <button class="savebtn" id="kdSave">💾 Lưu kết quả vào lịch sử</button>
     <div class="card" id="kdDetailCard" style="display:none">
       <h2>Chi tiết</h2>
       <div class="rows" id="kdRows"></div>
@@ -418,9 +484,20 @@ footer b { color: var(--ink-2); }
       <div class="amount" id="sxTotal">0<small> đ</small></div>
       <div class="meta" id="sxMeta">Nhập số điện để tính</div>
     </div>
+    <button class="savebtn" id="sxSave">💾 Lưu kết quả vào lịch sử</button>
     <div class="card" id="sxDetailCard" style="display:none">
       <h2>Chi tiết</h2>
       <div class="rows" id="sxRows"></div>
+    </div>
+  </section>
+
+  <!-- ============ LỊCH SỬ ============ -->
+  <section class="pane" id="pane-ls">
+    <div class="card">
+      <h2>Lịch sử tính toán</h2>
+      <div id="histList"></div>
+      <p id="histEmpty"><span class="big">🕘</span>Chưa có kết quả nào được lưu.<br>Tính xong, bấm "💾 Lưu kết quả" để lưu lại.</p>
+      <button id="histClear">🗑 Xoá toàn bộ lịch sử</button>
     </div>
   </section>
 
@@ -570,6 +647,7 @@ function calcSH() {
     showTotal($("shTotal"), 0);
     $("shMeta").textContent = "Nhập số điện để tính";
     card.style.display = "none";
+    setResult("sh", null);
     return;
   }
 
@@ -611,6 +689,7 @@ function calcSH() {
     (households > 1 ? ` · ${households} hộ` : "") +
     (prepaid ? " · trả trước" : "") +
     (vat ? " · đã gồm VAT 8%" : " · chưa gồm VAT");
+  setResult("sh", { kwh, total, meta: $("shMeta").textContent });
 }
 
 /* ===== KD / SX chung ===== */
@@ -643,6 +722,7 @@ function calcTOU(prefix, data, voltId) {
     showTotal($(prefix + "Total"), 0);
     $(prefix + "Meta").textContent = "Nhập số điện để tính";
     card.style.display = "none";
+    setResult(prefix, null);
     return;
   }
   let sub = 0, html = "";
@@ -664,6 +744,7 @@ function calcTOU(prefix, data, voltId) {
   card.style.display = "";
   showTotal($(prefix + "Total"), total);
   $(prefix + "Meta").textContent = `${fmt(kwh)} kWh · ${p.label}` + (vat ? " · đã gồm VAT 8%" : " · chưa gồm VAT");
+  setResult(prefix, { kwh, total, meta: $(prefix + "Meta").textContent });
 }
 
 function rowHTML(label, val) {
@@ -679,6 +760,118 @@ function finish(sub, vat) {
     html += `<div class="row sum"><span class="l">Tổng thanh toán</span><span class="r">${fmt(total)} đ</span></div>`;
   }
   return { total, metaHtml: html };
+}
+
+/* ===== Lịch sử tính toán ===== */
+const HIST_KEY = "ttd-history";
+const HIST_MAX = 50;
+const TYPE_INFO = { sh: ["🏠", "Sinh hoạt"], kd: ["🏪", "Kinh doanh"], sx: ["🏭", "Sản xuất"] };
+const lastResult = { sh: null, kd: null, sx: null };
+
+function setResult(prefix, r) {
+  lastResult[prefix] = r;
+  const btn = $(prefix + "Save");
+  btn.classList.toggle("show", !!r);
+  btn.classList.remove("saved");
+  btn.textContent = "💾 Lưu kết quả vào lịch sử";
+}
+
+function loadHistory() {
+  try { const a = JSON.parse(localStorage.getItem(HIST_KEY)); return Array.isArray(a) ? a : []; }
+  catch { return []; }
+}
+function saveHistory(list) {
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(list)); } catch {}
+}
+
+function renderHistory() {
+  const list = loadHistory();
+  const has = list.length > 0;
+  $("histEmpty").style.display = has ? "none" : "";
+  $("histClear").classList.toggle("show", has);
+  $("histList").innerHTML = list.map(e => {
+    const [ico, name] = TYPE_INFO[e.type] || ["⚡", "Khác"];
+    const d = new Date(e.date);
+    const when = d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }) +
+      " " + d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+    return `<div class="hist-item">
+      <span class="ico">${ico}</span>
+      <span class="mid">
+        <span class="t">${name} · ${fmt(e.kwh)} kWh</span>
+        <span class="d">${when} · ${e.meta}</span>
+      </span>
+      <span class="amt">${fmt(e.total)} đ</span>
+      <button class="del" data-id="${e.id}" aria-label="Xoá mục này">✕</button>
+    </div>`;
+  }).join("");
+  $("histList").querySelectorAll(".del").forEach(b => {
+    b.onclick = () => {
+      saveHistory(loadHistory().filter(e => String(e.id) !== b.dataset.id));
+      renderHistory();
+    };
+  });
+}
+
+["sh", "kd", "sx"].forEach(prefix => {
+  $(prefix + "Save").onclick = () => {
+    const r = lastResult[prefix];
+    if (!r) return;
+    const list = loadHistory();
+    list.unshift({ id: Date.now(), type: prefix, kwh: r.kwh, total: Math.round(r.total), meta: r.meta, date: new Date().toISOString() });
+    saveHistory(list.slice(0, HIST_MAX));
+    renderHistory();
+    const btn = $(prefix + "Save");
+    btn.classList.add("saved");
+    btn.textContent = "✓ Đã lưu vào lịch sử";
+    setTimeout(() => {
+      if (btn.classList.contains("saved")) {
+        btn.classList.remove("saved");
+        btn.textContent = "💾 Lưu kết quả vào lịch sử";
+      }
+    }, 1600);
+  };
+});
+
+$("histClear").onclick = () => {
+  if (confirm("Xoá toàn bộ lịch sử tính toán?")) {
+    saveHistory([]);
+    renderHistory();
+  }
+};
+renderHistory();
+
+/* ===== PWA: nút cài đặt ===== */
+let deferredPrompt = null;
+const installBtn = $("installBtn");
+
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.classList.add("show");
+});
+installBtn.onclick = async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") installBtn.classList.remove("show");
+    deferredPrompt = null;
+  } else {
+    // iOS Safari không có beforeinstallprompt
+    alert("Để cài đặt: mở menu Chia sẻ (⬆️) của trình duyệt rồi chọn “Thêm vào MH chính / Add to Home Screen”.");
+  }
+};
+window.addEventListener("appinstalled", () => {
+  installBtn.classList.remove("show");
+  deferredPrompt = null;
+});
+// iOS: hiện nút hướng dẫn cài đặt nếu chưa chạy ở chế độ standalone
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+if (isIOS && !isStandalone) installBtn.classList.add("show");
+
+/* ===== PWA: service worker ===== */
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 }
 
 /* ===== Wire up ===== */

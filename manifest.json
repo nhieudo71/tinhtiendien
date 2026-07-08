@@ -1,0 +1,26 @@
+{
+  "name": "Tính Tiền Điện 2026",
+  "short_name": "Tiền Điện",
+  "description": "Tính tiền điện sinh hoạt, kinh doanh, sản xuất theo biểu giá EVN 2026",
+  "lang": "vi",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#101219",
+  "theme_color": "#12141a",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
